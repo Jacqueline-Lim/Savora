@@ -4,9 +4,19 @@ Savora is a React Native CLI application built for the Fortitude Asia Recipe App
 
 ## Interface tour
 
-Savora uses a consistent five-item bottom navigation bar. Home, Search, Sync, and Account open the app's main areas, while the raised centre button provides quick access to the Add Recipe form.
+Savora begins with Firebase authentication and then uses a consistent five-item bottom navigation bar. Home, Search, Sync, and Account open the app's main areas, while the raised centre button provides quick access to the Add Recipe form.
 
 <table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/login.png" alt="Savora sign-in screen" width="320" />
+      <br /><strong>Sign In</strong><br />Sign in with a Firebase email and password account or continue with Google. The underlined Create account link switches to registration without leaving the authentication flow.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/register.png" alt="Savora registration screen" width="320" />
+      <br /><strong>Create Account</strong><br />Register with an email address, password, and password confirmation. Validation catches mismatched passwords, Google Sign-In is also available, and the underlined Sign in link returns to existing-account access.
+    </td>
+  </tr>
   <tr>
     <td width="50%" valign="top">
       <img src="docs/screenshots/home.png" alt="Savora home screen" width="320" />

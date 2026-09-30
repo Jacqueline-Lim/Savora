@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import {
   Image,
   KeyboardAvoidingView,
@@ -17,6 +16,8 @@ import { AppButton } from '../components/AppButton';
 import { FormField } from '../components/FormField';
 import { useAuth } from '../hooks/useAuth';
 import { colors, radius, spacing } from '../theme';
+
+const GOOGLE_LOGO = require('../../assets/google-g-logo.png');
 
 export function LoginScreen(): React.JSX.Element {
   const {
@@ -149,20 +150,30 @@ export function LoginScreen(): React.JSX.Element {
               <View style={styles.dividerLine} />
             </View>
 
-            <View style={styles.googleButtonFrame}>
-              <GoogleSigninButton
-                accessibilityLabel="Sign in with Google"
-                color={GoogleSigninButton.Color.Light}
-                disabled={isLoading}
-                onPress={() => {
-                  dismissError();
-                  setValidationMessage(null);
-                  loginWithGoogle().catch(() => undefined);
-                }}
-                size={GoogleSigninButton.Size.Wide}
-                style={styles.googleButton}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Sign in with Google"
+              accessibilityState={{ disabled: isLoading, busy: isLoading }}
+              disabled={isLoading}
+              onPress={() => {
+                dismissError();
+                setValidationMessage(null);
+                loginWithGoogle().catch(() => undefined);
+              }}
+              style={({ pressed }) => [
+                styles.googleButton,
+                pressed && styles.googleButtonPressed,
+                isLoading && styles.googleButtonDisabled,
+              ]}
+            >
+              <Image
+                accessibilityIgnoresInvertColors
+                source={GOOGLE_LOGO}
+                resizeMode="contain"
+                style={styles.googleLogo}
               />
-            </View>
+              <Text style={styles.googleButtonText}>Sign in with Google</Text>
+            </Pressable>
           </View>
 
           <View style={styles.accountPrompt}>
@@ -272,20 +283,34 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
-  googleButtonFrame: {
+  googleButton: {
     width: '100%',
-    height: 50,
+    minHeight: 50,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     alignSelf: 'center',
-    overflow: 'hidden',
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: '#747775',
     borderRadius: radius.md,
     backgroundColor: colors.surface,
   },
-  googleButton: {
-    width: '100%',
-    height: 56,
-    marginTop: -3,
+  googleLogo: {
+    position: 'absolute',
+    left: 16,
+    width: 20,
+    height: 20,
+  },
+  googleButtonText: {
+    color: '#1F1F1F',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  googleButtonPressed: {
+    backgroundColor: '#F5F5F5',
+  },
+  googleButtonDisabled: {
+    opacity: 0.5,
   },
   accountPrompt: {
     flexDirection: 'row',
