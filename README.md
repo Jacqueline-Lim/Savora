@@ -1,7 +1,42 @@
 # Savora
-<<<<<<< HEAD
 
 Savora is a React Native CLI application built for the Fortitude Asia Recipe App hands-on test. It supports Firebase-authenticated access, cloud recipe sync, online recipe discovery, and complete local recipe management on iOS and Android.
+
+## Interface tour
+
+Savora uses a consistent five-item bottom navigation bar. Home, Search, Sync, and Account open the app's main areas, while the raised centre button provides quick access to the Add Recipe form.
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/home.png" alt="Savora home screen" width="320" />
+      <br /><strong>Home</strong><br />Browse the cookbook, filter recipes by type, open recipe details, or jump directly to search. Recipe cards show a photo, category, title, ingredient count, and step count.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/search.png" alt="Savora recipe search screen" width="320" />
+      <br /><strong>Search</strong><br />Find recipes by recipe name or ingredient. Type chips narrow the results to categories such as Breakfast, Main Course, Dessert, Snack, and Drink.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/add-recipe.png" alt="Savora add recipe screen" width="320" />
+      <br /><strong>Add Recipe</strong><br />Create a recipe with a selected photo, recipe name, type, ingredients, and ordered preparation steps. The same form is reused when editing an existing recipe.
+    </td>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/sync.png" alt="Savora sync and discover screen" width="320" />
+      <br /><strong>Sync &amp; Discover</strong><br />Back up and merge the signed-in user's private recipes with Firebase, or import additional recipe ideas from the online catalogue without duplicating existing imports.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="docs/screenshots/account.png" alt="Savora account screen" width="320" />
+      <br /><strong>Account</strong><br />View the authenticated profile, local recipe count, cloud tools, and Trash. Recipes in Trash can be restored or permanently deleted before signing out.
+    </td>
+    <td width="50%" valign="top">
+      <strong>Responsive and accessible</strong><br />The interface respects safe areas, supports phone and tablet widths, uses labelled controls and readable contrast, and keeps destructive actions behind confirmation dialogs.
+    </td>
+  </tr>
+</table>
 
 ## Requirements covered
 
@@ -149,7 +184,8 @@ cd android
 
 Sample recipes are inserted only when no saved recipe collection exists. Clear the app data or uninstall and reinstall the app to restore the original samples. Signing out removes only the Firebase login session and keeps locally saved recipes intact.
 
-Moving a recipe to Trash keeps a recoverable tombstone locally and in the signed-in user's private Firestore collection. Restoring clears that tombstone. **Delete forever** removes the recipe document from Firestore and then removes its local copy.
-=======
+# Moving a recipe to Trash keeps a recoverable tombstone locally and in the signed-in user's private Firestore collection. Restoring clears that tombstone. **Delete forever** removes the recipe document from Firestore and then removes its local copy.
+
 RecipeApp
->>>>>>> 31f2ce55ab55d72af267e7a08e64604f048df6c3
+
+> > > > > > > 31f2ce55ab55d72af267e7a08e64604f048df6c3
