@@ -87,11 +87,14 @@ const styles = StyleSheet.create({
   },
   imageFrame: {
     position: 'relative',
+    width: '100%',
+    aspectRatio: 1.28,
+    overflow: 'hidden',
+    backgroundColor: colors.surfaceMuted,
   },
   image: {
     width: '100%',
-    aspectRatio: 1.28,
-    backgroundColor: colors.surfaceMuted,
+    height: '100%',
   },
   typeBadge: {
     position: 'absolute',

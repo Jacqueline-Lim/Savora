@@ -448,6 +448,7 @@ const styles = StyleSheet.create({
     color: colors.white,
   },
   cardRow: {
+    alignItems: 'flex-start',
     gap: CARD_GAP,
   },
   cardSeparator: {

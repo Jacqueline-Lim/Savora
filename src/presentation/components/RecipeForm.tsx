@@ -116,24 +116,26 @@ export function RecipeForm({
         </View>
 
         <View style={styles.photoContainer}>
-          {imageUri ? (
-            <Image
-              accessibilityLabel="Selected recipe photo"
-              source={getRecipeImageSource(imageUri)}
-              resizeMode="cover"
-              style={styles.photo}
-            />
-          ) : (
-            <View style={[styles.photo, styles.photoPlaceholder]}>
-              <Camera
-                accessibilityElementsHidden
-                color={colors.primary}
-                size={34}
-                strokeWidth={1.8}
+          <View style={styles.photoFrame}>
+            {imageUri ? (
+              <Image
+                accessibilityLabel="Selected recipe photo"
+                source={getRecipeImageSource(imageUri)}
+                resizeMode="cover"
+                style={styles.photo}
               />
-              <Text style={styles.placeholderText}>No photo selected</Text>
-            </View>
-          )}
+            ) : (
+              <View style={[styles.photo, styles.photoPlaceholder]}>
+                <Camera
+                  accessibilityElementsHidden
+                  color={colors.primary}
+                  size={34}
+                  strokeWidth={1.8}
+                />
+                <Text style={styles.placeholderText}>No photo selected</Text>
+              </View>
+            )}
+          </View>
           <AppButton
             label={imageUri ? 'Change photo' : 'Choose photo'}
             onPress={() => {
@@ -266,11 +268,16 @@ const styles = StyleSheet.create({
   photoContainer: {
     gap: spacing.sm,
   },
-  photo: {
+  photoFrame: {
     width: '100%',
     aspectRatio: 16 / 9,
+    overflow: 'hidden',
     borderRadius: radius.lg,
     backgroundColor: colors.surfaceMuted,
+  },
+  photo: {
+    width: '100%',
+    height: '100%',
   },
   photoPlaceholder: {
     alignItems: 'center',

@@ -99,12 +99,14 @@ export function RecipeDetailScreen({
   return (
     <SafeAreaView edges={['bottom']} style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Image
-          accessibilityLabel={`Photo of ${recipe.title}`}
-          source={getRecipeImageSource(recipe.imageUri)}
-          resizeMode="cover"
-          style={styles.heroImage}
-        />
+        <View style={styles.heroImageFrame}>
+          <Image
+            accessibilityLabel={`Photo of ${recipe.title}`}
+            source={getRecipeImageSource(recipe.imageUri)}
+            resizeMode="cover"
+            style={styles.heroImage}
+          />
+        </View>
 
         <View style={styles.titleBlock}>
           <Text style={styles.type}>{getRecipeTypeName(recipe.typeId)}</Text>
@@ -176,11 +178,16 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.xl,
     gap: spacing.lg,
   },
-  heroImage: {
+  heroImageFrame: {
     width: '100%',
     aspectRatio: 16 / 9,
+    overflow: 'hidden',
     borderRadius: radius.lg,
     backgroundColor: colors.surfaceMuted,
+  },
+  heroImage: {
+    width: '100%',
+    height: '100%',
   },
   titleBlock: {
     gap: spacing.xs,
