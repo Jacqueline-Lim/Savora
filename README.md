@@ -1,97 +1,169 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Savora
 
-# Getting Started
+Savora is a React Native CLI application built for the Fortitude Asia Recipe App hands-on test. It supports Firebase-authenticated access, cloud recipe sync, online recipe discovery, and complete local recipe management on iOS and Android.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+## Requirements covered
 
-## Step 1: Start Metro
+- TypeScript and React Native CLI
+- Recipe types loaded from `src/data/recipetypes.json`
+- Pre-populated sample recipes
+- Recipe type filtering and recipe or ingredient search
+- Add recipe flow with photo selection, ingredients, and ordered steps
+- Detail page with an inline edit mode for every displayed recipe field
+- Trash workflow with restore and confirmed permanent deletion
+- Trashed status syncs to Firebase so deleted recipes do not return during sync
+- Permanent deletion removes both the local copy and its private Firestore document
+- Persistent recipe storage with AsyncStorage
+- Safe-area support and layouts for phone, tablet, portrait, and landscape widths
+- Accessible labels, readable contrast, large controls, validation, progress feedback, empty states, and destructive-action confirmation
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Bonus requirements covered
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+### Hooks
+
+The app uses state and effect hooks throughout. Typed custom hooks including `useAuth`, `useRecipes`, `useAppDispatch`, and `useAppSelector` provide reusable access to application state and operations.
+
+### Firebase authentication and session persistence
+
+- Registration and login use Firebase Authentication email/password accounts.
+- Users can also authenticate with an official Google-branded sign-in button.
+- Passwords are handled only by Firebase Authentication and are never stored by the app.
+- The native Firebase SDK securely persists the authenticated session across restarts.
+- The session remains active until the user confirms sign out; logout revokes the local Firebase session.
+- Firebase errors are translated into clear, user-facing guidance.
+
+### Networking
+
+The app has two network-backed features:
+
+- `FirebaseRecipeSyncService` merges local recipes with the signed-in user's private Firestore collection. The newest `updatedAt` value wins and writes are batched.
+- The reusable `ApiClient` provides JSON requests, status handling, helpful errors, and a 12-second timeout. Featured imports come from `GET https://dummyjson.com/recipes`, map into the local domain model, persist in AsyncStorage, and are deduplicated by remote ID.
+
+### Redux Toolkit
+
+Redux Toolkit manages authentication and recipe state across screens. Async thunks coordinate Firebase, the public API, recipe service, and persistent recipe repository. Redux state contains serializable data only; domain objects are created at the presentation boundary.
+
+## Architecture
+
+The project separates responsibilities so UI, business rules, APIs, and storage can change independently.
+
+```text
+src
+|-- application
+|   |-- store          Redux slices, thunks, and typed store
+|   `-- RecipeService  Recipe use cases
+|-- data               Local JSON and seed records
+|-- domain
+|   |-- models         Recipe and authentication entities
+|   `-- repositories   Storage abstractions
+|-- infrastructure
+|   |-- api            HTTP client and featured-recipe API
+|   |-- firebase       Authentication and Firestore sync services
+|   `-- storage        AsyncStorage recipe repository
+`-- presentation
+    |-- components     Reusable controls and recipe UI
+    |-- hooks          Typed Redux and application hooks
+    |-- navigation     Typed routes
+    `-- screens        Login, list, add, detail, and edit experiences
+```
+
+Object-oriented principles are demonstrated by the domain entities, repository interfaces, concrete repository classes, API clients, and service layer. Dependencies point toward domain abstractions, while functional components and custom hooks provide idiomatic React behavior.
+
+## Third-party libraries
+
+- React Navigation for typed screen navigation
+- Redux Toolkit and React Redux for shared state management
+- React Native Firebase Auth for authentication and native session persistence
+- React Native Firebase Firestore for private cloud recipe sync
+- React Native Google Sign-In for the branded Google account flow
+- AsyncStorage for restart-safe recipe persistence
+- React Native Picker for JSON-driven recipe type controls
+- React Native Image Picker for selecting recipe photos
+- React Native Safe Area Context and React Native Screens for native layout and navigation
+
+## Run locally
+
+Use Node.js 22.13 or newer for React Native 0.87.
 
 ```sh
-# Using npm
+npm install
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+In a second terminal:
 
 ```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+### Firebase setup
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+The supplied Android Firebase config belongs to application ID `com.recipe.app`. It is copied locally to `android/app/google-services.json` and ignored by Git so its project configuration is not accidentally published.
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+In Firebase Console:
+
+1. Open **Authentication > Sign-in method** and enable **Email/Password**.
+2. Enable the **Google** provider and select a project support email.
+3. Under **Project settings > General > Your apps > recipe app**, add the debug SHA-1 fingerprint shown below.
+4. Download the refreshed `google-services.json` and replace both the root copy and `android/app/google-services.json`.
+5. Create a Cloud Firestore database.
+6. Deploy the included user-scoped rules with `firebase deploy --only firestore:rules`, or paste `firestore.rules` into the Firestore Rules editor and publish it.
+
+```text
+Debug SHA-1: 5E:8F:16:06:2E:A3:CD:2C:4A:0D:54:78:76:BA:A6:F3:8C:AB:F6:25
+```
+
+Release and Google Play builds use different signing certificates. Add their SHA-1 fingerprints before distributing those builds.
+
+The Android project uses Google Services Gradle plugin `4.5.0` and Firebase Android BoM `34.19.0`. For iOS, add the matching `GoogleService-Info.plist` to the Xcode target before running CocoaPods; the Android JSON cannot configure iOS.
+
+### Firebase Storage recipe images
+
+The configured default bucket is `recipe-app-e1319.firebasestorage.app`. Firebase currently requires the Blaze pay-as-you-go plan to create or use a Cloud Storage bucket, although eligible regions include no-cost usage allowances.
+
+To host the bundled recipe images:
+
+1. Open **Firebase Console > Databases & Storage > Storage** and select **Get started**.
+2. Choose the bucket location and finish the setup.
+3. Open the **Files** tab and create a `seed-recipes` folder.
+4. Upload each recipe image using a lowercase descriptive filename such as `banana-oat-pancakes.jpg`.
+5. Open an uploaded file, expand **File location**, and create or copy its download URL.
+6. Replace the matching value in `src/data/seedRecipeImages.ts` with that HTTPS download URL.
+7. Increase `SEED_DATA_VERSION` in `src/data/seedRecipes.ts` so existing installations refresh the bundled records on their next load.
+
+The download URL should begin with a structure similar to:
+
+```text
+https://firebasestorage.googleapis.com/v0/b/recipe-app-e1319.firebasestorage.app/o/seed-recipes%2F...
+```
+
+The app renders these HTTPS URLs directly, so manually uploaded seed images do not require the Firebase Storage SDK inside the app.
+
+For iOS, on macOS:
 
 ```sh
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
-
-```sh
-# Using npm
+cd ios && bundle exec pod install && cd ..
 npm run ios
-
-# OR using Yarn
-yarn ios
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Quality checks
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+```sh
+npx tsc --noEmit
+npm run lint
+npm test -- --runInBand
+```
 
-## Step 3: Modify your app
+For an Android debug build:
 
-Now that you have successfully run the app, let's make changes!
+```sh
+cd android
+./gradlew assembleDebug
+```
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+## Test reset
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+Sample recipes are inserted only when no saved recipe collection exists. Clear the app data or uninstall and reinstall the app to restore the original samples. Signing out removes only the Firebase login session and keeps locally saved recipes intact.
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Moving a recipe to Trash keeps a recoverable tombstone locally and in the signed-in user's private Firestore collection. Restoring clears that tombstone. **Delete forever** removes the recipe document from Firestore and then removes its local copy.
