@@ -2,7 +2,7 @@
 
 Savora is a React Native CLI application built for the Fortitude Asia Recipe App hands-on test. It supports Firebase-authenticated access, cloud recipe sync, online recipe discovery, and complete local recipe management on iOS and Android.
 
-## Interface tour
+## User Interface
 
 Savora begins with Firebase authentication and then uses a consistent five-item bottom navigation bar. Home, Search, Sync, and Account open the app's main areas, while the raised centre button provides quick access to the Add Recipe form.
 
@@ -48,22 +48,7 @@ Savora begins with Firebase authentication and then uses a consistent five-item 
   </tr>
 </table>
 
-## Requirements covered
 
-- TypeScript and React Native CLI
-- Recipe types loaded from `src/data/recipetypes.json`
-- Pre-populated sample recipes
-- Recipe type filtering and recipe or ingredient search
-- Add recipe flow with photo selection, ingredients, and ordered steps
-- Detail page with an inline edit mode for every displayed recipe field
-- Trash workflow with restore and confirmed permanent deletion
-- Trashed status syncs to Firebase so deleted recipes do not return during sync
-- Permanent deletion removes both the local copy and its private Firestore document
-- Persistent recipe storage with AsyncStorage
-- Safe-area support and layouts for phone, tablet, portrait, and landscape widths
-- Accessible labels, readable contrast, large controls, validation, progress feedback, empty states, and destructive-action confirmation
-
-## Bonus requirements covered
 
 ### Hooks
 
@@ -112,8 +97,6 @@ src
     |-- navigation     Typed routes
     `-- screens        Login, list, add, detail, and edit experiences
 ```
-
-Object-oriented principles are demonstrated by the domain entities, repository interfaces, concrete repository classes, API clients, and service layer. Dependencies point toward domain abstractions, while functional components and custom hooks provide idiomatic React behavior.
 
 ## Third-party libraries
 
