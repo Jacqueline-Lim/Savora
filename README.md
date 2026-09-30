@@ -117,27 +117,9 @@ Release and Google Play builds use different signing certificates. Add their SHA
 
 The Android project uses Google Services Gradle plugin `4.5.0` and Firebase Android BoM `34.19.0`. For iOS, add the matching `GoogleService-Info.plist` to the Xcode target before running CocoaPods; the Android JSON cannot configure iOS.
 
-### Firebase Storage recipe images
+### Bundled recipe images
 
-The configured default bucket is `recipe-app-e1319.firebasestorage.app`. Firebase currently requires the Blaze pay-as-you-go plan to create or use a Cloud Storage bucket, although eligible regions include no-cost usage allowances.
-
-To host the bundled recipe images:
-
-1. Open **Firebase Console > Databases & Storage > Storage** and select **Get started**.
-2. Choose the bucket location and finish the setup.
-3. Open the **Files** tab and create a `seed-recipes` folder.
-4. Upload each recipe image using a lowercase descriptive filename such as `banana-oat-pancakes.jpg`.
-5. Open an uploaded file, expand **File location**, and create or copy its download URL.
-6. Replace the matching value in `src/data/seedRecipeImages.ts` with that HTTPS download URL.
-7. Increase `SEED_DATA_VERSION` in `src/data/seedRecipes.ts` so existing installations refresh the bundled records on their next load.
-
-The download URL should begin with a structure similar to:
-
-```text
-https://firebasestorage.googleapis.com/v0/b/recipe-app-e1319.firebasestorage.app/o/seed-recipes%2F...
-```
-
-The app renders these HTTPS URLs directly, so manually uploaded seed images do not require the Firebase Storage SDK inside the app.
+The nine seed-recipe photos are bundled in `src/assets/seed-recipes`, so they display without an internet connection or Firebase Storage. `src/data/seedRecipeImages.ts` maps serializable `seed-recipe://` identifiers to static React Native image assets. User-selected photos and online recipe images continue to use their normal device or HTTPS URIs.
 
 For iOS, on macOS:
 

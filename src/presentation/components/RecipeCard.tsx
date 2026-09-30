@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { ListChecks, ShoppingBasket } from 'lucide-react-native';
 
+import { getRecipeImageSource } from '../../data/seedRecipeImages';
 import { Recipe } from '../../domain/models/Recipe';
 import { colors, radius, spacing } from '../theme';
 
@@ -37,7 +38,7 @@ export function RecipeCard({
       <View style={styles.imageFrame}>
         <Image
           accessibilityIgnoresInvertColors
-          source={{ uri: recipe.imageUri }}
+          source={getRecipeImageSource(recipe.imageUri)}
           resizeMode="cover"
           style={styles.image}
         />

@@ -3,6 +3,7 @@ import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { getRecipeImageSource } from '../../data/seedRecipeImages';
 import { getRecipeTypeName } from '../../data/recipeTypes';
 import { AppButton } from '../components/AppButton';
 import { RecipeForm } from '../components/RecipeForm';
@@ -100,7 +101,7 @@ export function RecipeDetailScreen({
       <ScrollView contentContainerStyle={styles.content}>
         <Image
           accessibilityLabel={`Photo of ${recipe.title}`}
-          source={{ uri: recipe.imageUri }}
+          source={getRecipeImageSource(recipe.imageUri)}
           resizeMode="cover"
           style={styles.heroImage}
         />

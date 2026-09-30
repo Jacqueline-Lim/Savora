@@ -1,4 +1,5 @@
 import { seedRecipes } from '../src/data/seedRecipes';
+import { getRecipeImageSource } from '../src/data/seedRecipeImages';
 import { recipeTypes } from '../src/data/recipeTypes';
 import { Recipe } from '../src/domain/models/Recipe';
 
@@ -10,7 +11,8 @@ describe('seedRecipes', () => {
     expect(new Set(ids).size).toBe(seedRecipes.length);
     seedRecipes.forEach(recipe => {
       expect(new Recipe(recipe).validate()).toEqual([]);
-      expect(recipe.imageUri).toMatch(/^https:\/\//);
+      expect(recipe.imageUri).toMatch(/^seed-recipe:\/\//);
+      expect(getRecipeImageSource(recipe.imageUri)).toBeDefined();
     });
   });
 

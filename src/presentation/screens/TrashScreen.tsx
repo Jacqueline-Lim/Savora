@@ -3,6 +3,7 @@ import { Alert, FlatList, Image, StyleSheet, Text, View } from 'react-native';
 import { Trash2 } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { getRecipeImageSource } from '../../data/seedRecipeImages';
 import { getRecipeTypeName } from '../../data/recipeTypes';
 import { Recipe } from '../../domain/models/Recipe';
 import { AppButton } from '../components/AppButton';
@@ -84,7 +85,7 @@ export function TrashScreen(): React.JSX.Element {
               <View style={styles.recipeRow}>
                 <Image
                   accessibilityLabel={`Photo of ${item.title}`}
-                  source={{ uri: item.imageUri }}
+                  source={getRecipeImageSource(item.imageUri)}
                   resizeMode="cover"
                   style={styles.image}
                 />

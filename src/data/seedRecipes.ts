@@ -1,7 +1,7 @@
 import { RecipeData } from '../domain/models/Recipe';
 import { seedRecipeImages } from './seedRecipeImages';
 
-export const SEED_DATA_VERSION = '3';
+export const SEED_DATA_VERSION = '4';
 
 export const seedRecipes: RecipeData[] = [
   {

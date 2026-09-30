@@ -13,6 +13,7 @@ import { Camera } from 'lucide-react-native';
 import { launchImageLibrary } from 'react-native-image-picker';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { getRecipeImageSource } from '../../data/seedRecipeImages';
 import { recipeTypes } from '../../data/recipeTypes';
 import { RecipeInput } from '../../domain/models/Recipe';
 import { AppButton } from './AppButton';
@@ -118,7 +119,7 @@ export function RecipeForm({
           {imageUri ? (
             <Image
               accessibilityLabel="Selected recipe photo"
-              source={{ uri: imageUri }}
+              source={getRecipeImageSource(imageUri)}
               resizeMode="cover"
               style={styles.photo}
             />
