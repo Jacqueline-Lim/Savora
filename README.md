@@ -1,4 +1,5 @@
 # Savora
+<<<<<<< HEAD
 
 Savora is a React Native CLI application built for the Fortitude Asia Recipe App hands-on test. It supports Firebase-authenticated access, cloud recipe sync, online recipe discovery, and complete local recipe management on iOS and Android.
 
@@ -149,3 +150,6 @@ cd android
 Sample recipes are inserted only when no saved recipe collection exists. Clear the app data or uninstall and reinstall the app to restore the original samples. Signing out removes only the Firebase login session and keeps locally saved recipes intact.
 
 Moving a recipe to Trash keeps a recoverable tombstone locally and in the signed-in user's private Firestore collection. Restoring clears that tombstone. **Delete forever** removes the recipe document from Firestore and then removes its local copy.
+=======
+RecipeApp
+>>>>>>> 31f2ce55ab55d72af267e7a08e64604f048df6c3
