@@ -4,6 +4,7 @@ import {
   Image,
   KeyboardAvoidingView,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -28,11 +29,22 @@ export function LoginScreen(): React.JSX.Element {
   } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
+  const [validationMessage, setValidationMessage] = useState<string | null>(
+    null,
+  );
   const isLoading = status === 'authenticating';
 
   const submit = async () => {
     dismissError();
+    setValidationMessage(null);
+
+    if (isRegistering && password !== confirmPassword) {
+      setValidationMessage('Passwords do not match.');
+      return;
+    }
+
     if (isRegistering) {
       await register(email, password);
     } else {
@@ -61,7 +73,7 @@ export function LoginScreen(): React.JSX.Element {
           <View style={styles.titleBlock}>
             <Text style={styles.eyebrow}>{APP_NAME.toUpperCase()}</Text>
             <Text style={styles.title}>
-              {isRegistering ? 'Create an account' : 'Welcome back'}
+              {isRegistering ? 'Create account' : 'Sign in'}
             </Text>
           </View>
 
@@ -87,17 +99,39 @@ export function LoginScreen(): React.JSX.Element {
               autoCapitalize="none"
               autoCorrect={false}
               secureTextEntry
-              textContentType="password"
-              returnKeyType="done"
+              textContentType={isRegistering ? 'newPassword' : 'password'}
+              returnKeyType={isRegistering ? 'next' : 'done'}
               onSubmitEditing={() => {
-                submit().catch(() => undefined);
+                if (!isRegistering) {
+                  submit().catch(() => undefined);
+                }
               }}
               editable={!isLoading}
             />
 
-            {errorMessage ? (
+            {isRegistering ? (
+              <FormField
+                label="Confirm password"
+                value={confirmPassword}
+                onChangeText={setConfirmPassword}
+                placeholder="Enter your password again"
+                autoCapitalize="none"
+                autoCorrect={false}
+                secureTextEntry
+                textContentType="newPassword"
+                returnKeyType="done"
+                onSubmitEditing={() => {
+                  submit().catch(() => undefined);
+                }}
+                editable={!isLoading}
+              />
+            ) : null}
+
+            {validationMessage || errorMessage ? (
               <View accessibilityLiveRegion="polite" style={styles.errorBox}>
-                <Text style={styles.errorText}>{errorMessage}</Text>
+                <Text style={styles.errorText}>
+                  {validationMessage ?? errorMessage}
+                </Text>
               </View>
             ) : null}
 
@@ -115,32 +149,51 @@ export function LoginScreen(): React.JSX.Element {
               <View style={styles.dividerLine} />
             </View>
 
-            <GoogleSigninButton
-              accessibilityLabel="Sign in with Google"
-              color={GoogleSigninButton.Color.Light}
-              disabled={isLoading}
-              onPress={() => {
-                dismissError();
-                loginWithGoogle().catch(() => undefined);
-              }}
-              size={GoogleSigninButton.Size.Wide}
-              style={styles.googleButton}
-            />
+            <View style={styles.googleButtonFrame}>
+              <GoogleSigninButton
+                accessibilityLabel="Sign in with Google"
+                color={GoogleSigninButton.Color.Light}
+                disabled={isLoading}
+                onPress={() => {
+                  dismissError();
+                  setValidationMessage(null);
+                  loginWithGoogle().catch(() => undefined);
+                }}
+                size={GoogleSigninButton.Size.Wide}
+                style={styles.googleButton}
+              />
+            </View>
           </View>
 
-          <View style={styles.accountCard}>
-            <Text style={styles.accountTitle}>
-              {isRegistering ? 'Already registered?' : `New to ${APP_NAME}?`}
+          <View style={styles.accountPrompt}>
+            <Text style={styles.accountPromptText}>
+              {isRegistering
+                ? 'Already have an account?'
+                : `New to ${APP_NAME}?`}
             </Text>
-            <AppButton
-              label={isRegistering ? 'Sign in' : 'Register'}
+            <Pressable
+              accessibilityRole="link"
+              accessibilityLabel={
+                isRegistering ? 'Go to sign in' : 'Go to registration'
+              }
               onPress={() => {
                 setIsRegistering(current => !current);
+                setPassword('');
+                setConfirmPassword('');
+                setValidationMessage(null);
                 dismissError();
               }}
               disabled={isLoading}
-              variant="secondary"
-            />
+              hitSlop={10}
+              style={({ pressed }) => [
+                pressed && styles.linkPressed,
+                isLoading && styles.linkDisabled,
+              ]}
+            >
+              <Text style={styles.accountLink}>
+                {isRegistering ? 'Sign in' : 'Create account'}
+              </Text>
+            </Pressable>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -162,12 +215,12 @@ const styles = StyleSheet.create({
     minHeight: '100%',
     alignSelf: 'center',
     justifyContent: 'center',
-    gap: spacing.lg,
+    gap: 20,
     padding: spacing.lg,
   },
   brandLogo: {
-    width: 108,
-    height: 108,
+    width: 92,
+    height: 92,
     alignSelf: 'center',
   },
   titleBlock: {
@@ -182,7 +235,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.ink,
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '900',
   },
   formCard: {
@@ -219,24 +272,44 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
   },
+  googleButtonFrame: {
+    width: '100%',
+    height: 50,
+    alignSelf: 'center',
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    backgroundColor: colors.surface,
+  },
   googleButton: {
     width: '100%',
-    height: 48,
-    alignSelf: 'center',
+    height: 56,
+    marginTop: -3,
   },
-  accountCard: {
+  accountPrompt: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: spacing.md,
-    padding: spacing.md,
-    borderRadius: radius.lg,
-    backgroundColor: colors.surfaceMuted,
+    justifyContent: 'center',
+    flexWrap: 'wrap',
+    gap: 6,
+    paddingHorizontal: spacing.md,
   },
-  accountTitle: {
-    flex: 1,
+  accountPromptText: {
     color: colors.ink,
-    fontSize: 15,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  accountLink: {
+    color: colors.primary,
+    fontSize: 14,
     fontWeight: '800',
+    textDecorationLine: 'underline',
+  },
+  linkPressed: {
+    opacity: 0.65,
+  },
+  linkDisabled: {
+    opacity: 0.45,
   },
 });
